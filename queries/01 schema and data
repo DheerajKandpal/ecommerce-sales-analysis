@@ -1,0 +1,153 @@
+-- ============================================================
+-- E-Commerce Sales Analysis
+-- File 01: Schema Setup & Sample Data
+-- Author: Dheeraj Kandpal
+-- ============================================================
+
+-- Create database
+CREATE DATABASE IF NOT EXISTS ecommerce_db;
+USE ecommerce_db;
+
+-- -----------------------------------------------
+-- TABLE: customers
+-- -----------------------------------------------
+CREATE TABLE customers (
+    customer_id     INT PRIMARY KEY AUTO_INCREMENT,
+    customer_name   VARCHAR(100) NOT NULL,
+    email           VARCHAR(150) UNIQUE,
+    city            VARCHAR(80),
+    state           VARCHAR(80),
+    country         VARCHAR(80) DEFAULT 'India',
+    signup_date     DATE,
+    segment         ENUM('Consumer', 'Corporate', 'Home Office') DEFAULT 'Consumer'
+);
+
+-- -----------------------------------------------
+-- TABLE: products
+-- -----------------------------------------------
+CREATE TABLE products (
+    product_id      VARCHAR(20) PRIMARY KEY,
+    product_name    VARCHAR(200) NOT NULL,
+    category        VARCHAR(80),
+    sub_category    VARCHAR(80),
+    cost_price      DECIMAL(10, 2),
+    sell_price      DECIMAL(10, 2)
+);
+
+-- -----------------------------------------------
+-- TABLE: orders
+-- -----------------------------------------------
+CREATE TABLE orders (
+    order_id        VARCHAR(20) PRIMARY KEY,
+    customer_id     INT,
+    order_date      DATE,
+    ship_date       DATE,
+    ship_mode       ENUM('Standard Class', 'Second Class', 'First Class', 'Same Day'),
+    region          VARCHAR(50),
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+
+-- -----------------------------------------------
+-- TABLE: order_items
+-- -----------------------------------------------
+CREATE TABLE order_items (
+    item_id         INT PRIMARY KEY AUTO_INCREMENT,
+    order_id        VARCHAR(20),
+    product_id      VARCHAR(20),
+    quantity        INT,
+    discount        DECIMAL(4, 2) DEFAULT 0.00,
+    sales           DECIMAL(10, 2),
+    profit          DECIMAL(10, 2),
+    FOREIGN KEY (order_id)   REFERENCES orders(order_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+-- -----------------------------------------------
+-- SAMPLE DATA: customers
+-- -----------------------------------------------
+INSERT INTO customers (customer_name, email, city, state, segment, signup_date) VALUES
+('Aarav Sharma',     'aarav.sharma@gmail.com',     'Mumbai',    'Maharashtra', 'Consumer',    '2021-03-12'),
+('Priya Mehta',      'priya.mehta@outlook.com',    'Delhi',     'Delhi',       'Corporate',   '2021-06-05'),
+('Rohan Gupta',      'rohan.gupta@yahoo.com',      'Bangalore', 'Karnataka',   'Consumer',    '2021-08-19'),
+('Sneha Patel',      'sneha.patel@gmail.com',      'Ahmedabad', 'Gujarat',     'Home Office', '2022-01-10'),
+('Vikram Singh',     'vikram.singh@gmail.com',     'Chennai',   'Tamil Nadu',  'Corporate',   '2022-03-22'),
+('Anjali Verma',     'anjali.verma@outlook.com',   'Pune',      'Maharashtra', 'Consumer',    '2022-05-14'),
+('Karan Joshi',      'karan.joshi@gmail.com',      'Hyderabad', 'Telangana',   'Corporate',   '2022-07-30'),
+('Meera Nair',       'meera.nair@gmail.com',       'Kochi',     'Kerala',      'Consumer',    '2022-09-01'),
+('Arjun Kapoor',     'arjun.kapoor@yahoo.com',     'Jaipur',    'Rajasthan',   'Home Office', '2023-01-15'),
+('Divya Reddy',      'divya.reddy@gmail.com',      'Kolkata',   'West Bengal', 'Consumer',    '2023-02-28');
+
+-- -----------------------------------------------
+-- SAMPLE DATA: products
+-- -----------------------------------------------
+INSERT INTO products (product_id, product_name, category, sub_category, cost_price, sell_price) VALUES
+('P001', 'Apple MacBook Pro 14"',          'Technology',  'Laptops',       95000, 129000),
+('P002', 'Samsung Galaxy S23',             'Technology',  'Phones',        55000,  72000),
+('P003', 'Sony WH-1000XM5 Headphones',     'Technology',  'Accessories',    8000,  14999),
+('P004', 'Canon EOS 200D Camera',          'Technology',  'Cameras',       42000,  58000),
+('P005', 'Logitech MX Master 3 Mouse',     'Technology',  'Accessories',    3200,   6999),
+('P006', 'IKEA Kallax Shelf',              'Furniture',   'Bookcases',      4500,   7999),
+('P007', 'Herman Miller Chair',            'Furniture',   'Chairs',        35000,  55000),
+('P008', 'Wooden Study Table',             'Furniture',   'Tables',        12000,  18500),
+('P009', 'HP LaserJet Printer',            'Technology',  'Printers',      14000,  21000),
+('P010', 'Staples Copy Paper (500 sheets)','Office Supplies','Paper',         350,    699),
+('P011', 'Pilot G2 Pen Set (12-pack)',     'Office Supplies','Pens',          200,    449),
+('P012', 'Moleskine Notebook (5-pack)',    'Office Supplies','Notebooks',     900,   1799),
+('P013', 'Scotch Heavy Duty Tape',         'Office Supplies','Fasteners',     120,    249),
+('P014', 'Dell 27" Monitor',              'Technology',  'Monitors',      22000,  32000),
+('P015', 'Ergonomic Keyboard',             'Technology',  'Accessories',    2500,   4999);
+
+-- -----------------------------------------------
+-- SAMPLE DATA: orders
+-- -----------------------------------------------
+INSERT INTO orders (order_id, customer_id, order_date, ship_date, ship_mode, region) VALUES
+('ORD-2022-001', 1, '2022-01-15', '2022-01-19', 'Standard Class', 'West'),
+('ORD-2022-002', 2, '2022-02-03', '2022-02-05', 'First Class',    'North'),
+('ORD-2022-003', 3, '2022-03-22', '2022-03-25', 'Second Class',   'South'),
+('ORD-2022-004', 4, '2022-04-10', '2022-04-12', 'Same Day',       'West'),
+('ORD-2022-005', 5, '2022-05-18', '2022-05-22', 'Standard Class', 'South'),
+('ORD-2022-006', 6, '2022-06-07', '2022-06-09', 'First Class',    'West'),
+('ORD-2022-007', 7, '2022-07-25', '2022-07-28', 'Second Class',   'South'),
+('ORD-2022-008', 8, '2022-08-14', '2022-08-17', 'Standard Class', 'South'),
+('ORD-2022-009', 9, '2022-09-30', '2022-10-03', 'Standard Class', 'North'),
+('ORD-2022-010', 10,'2022-10-12', '2022-10-14', 'First Class',    'East'),
+('ORD-2023-001', 1, '2023-01-08', '2023-01-11', 'Standard Class', 'West'),
+('ORD-2023-002', 3, '2023-02-14', '2023-02-17', 'Second Class',   'South'),
+('ORD-2023-003', 5, '2023-03-05', '2023-03-07', 'Same Day',       'South'),
+('ORD-2023-004', 2, '2023-04-20', '2023-04-23', 'Standard Class', 'North'),
+('ORD-2023-005', 7, '2023-05-11', '2023-05-14', 'First Class',    'South'),
+('ORD-2023-006', 4, '2023-06-29', '2023-07-02', 'Standard Class', 'West'),
+('ORD-2023-007', 6, '2023-07-15', '2023-07-17', 'Second Class',   'West'),
+('ORD-2023-008', 8, '2023-08-22', '2023-08-25', 'Standard Class', 'South'),
+('ORD-2023-009', 9, '2023-09-10', '2023-09-12', 'First Class',    'North'),
+('ORD-2023-010', 10,'2023-11-28', '2023-12-01', 'Standard Class', 'East');
+
+-- -----------------------------------------------
+-- SAMPLE DATA: order_items
+-- -----------------------------------------------
+INSERT INTO order_items (order_id, product_id, quantity, discount, sales, profit) VALUES
+('ORD-2022-001', 'P001', 1, 0.00, 129000, 34000),
+('ORD-2022-001', 'P005', 2, 0.05,  13298,  6898),
+('ORD-2022-002', 'P007', 1, 0.10,  49500, 14500),
+('ORD-2022-003', 'P002', 1, 0.00,  72000, 17000),
+('ORD-2022-003', 'P003', 1, 0.05,  14249,  5749),
+('ORD-2022-004', 'P010', 5, 0.00,   3495,  1745),
+('ORD-2022-004', 'P011', 3, 0.00,   1347,   747),
+('ORD-2022-005', 'P009', 1, 0.00,  21000,  7000),
+('ORD-2022-006', 'P014', 2, 0.05,  60800, 17600),
+('ORD-2022-007', 'P004', 1, 0.00,  58000, 16000),
+('ORD-2022-008', 'P012', 2, 0.00,   3598,  1798),
+('ORD-2022-009', 'P008', 1, 0.10,  16650,  3150),
+('ORD-2022-010', 'P015', 2, 0.05,   9498,  3998),
+('ORD-2023-001', 'P001', 1, 0.05, 122550, 27550),
+('ORD-2023-001', 'P015', 1, 0.00,   4999,  2499),
+('ORD-2023-002', 'P002', 2, 0.00, 144000, 34000),
+('ORD-2023-003', 'P003', 1, 0.00,  14999,  6999),
+('ORD-2023-003', 'P005', 1, 0.00,   6999,  3799),
+('ORD-2023-004', 'P007', 1, 0.00,  55000, 20000),
+('ORD-2023-005', 'P014', 1, 0.10,  28800,  6800),
+('ORD-2023-006', 'P010',10, 0.05,   6640,  3140),
+('ORD-2023-007', 'P006', 2, 0.00,  15998,  6998),
+('ORD-2023-008', 'P009', 1, 0.05,  19950,  5950),
+('ORD-2023-009', 'P013', 5, 0.00,   1245,    645),
+('ORD-2023-010', 'P004', 1, 0.00,  58000, 16000);
